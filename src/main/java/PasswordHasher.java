@@ -1,68 +1,65 @@
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PasswordHasher {
 
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
         String filePath = "src/main/resources/best110.txt";
-        List<String> words = readWordsFromFile(filePath); // Pfade können an deine Projektstruktur angepasst werden
-
-        List<String> hashedWords = new ArrayList<>();
-
+        System.out.print("Bitte geben Sie den Hash-Wert ein: ");
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Geben Sie den Hashvalue ein: ");
         String targetHash = scanner.nextLine();
 
-        //String targetHash = "340d600392818df2413382dc7d8325c360d83ea49a262d31760348484bbc10b5";
-        String foundWord = null;
+        List<String> words = readWordsFromFile(filePath);
+
+        //Map<String, String> rainbowTable = generateRainbowTable(words);
+
+        //String foundWord = rainbowTable.get(targetHash);
+
+        Map<String, RainbowTable> rainbowTable = generateRainbowTable(words);
+
+        RainbowTable foundHash = rainbowTable.get(targetHash);
+
+        if (foundHash != null) {
+            System.out.println("Gefundenes Wort für den Hash: " + foundHash.getWord());
+            System.out.println("Verwendete Hash-Methode: " + foundHash.getHashMethod());
+        } else {
+            System.out.println("Hash wurde nicht gefunden.");
+
+        }
+    }
+
+    private static Map<String, RainbowTable> generateRainbowTable(List<String> words) throws NoSuchAlgorithmException {
+        Map<String, RainbowTable> rainbowTableHash = new HashMap<>();
 
         for (String word : words) {
-            //System.out.println("Wort: " + word);
-            String md5Hash = MD5Hash.hashWithMD5(word);
-            if (md5Hash.equals(targetHash)) {
-                foundWord = word;
-                break;
-            }
+            RainbowTable md5Hash = new RainbowTable(MD5Hash.hashWithMD5(word), "MD5", word);
+            RainbowTable sha256Hash = new RainbowTable(SHA256Hash.hashWithSHA256(word), "SHA256", word);
+            RainbowTable sha256SaltedHash = new RainbowTable(SHA256SaltHash.hashWithSHA256AndSalt(word), "HA256 with Salt", word);
+            RainbowTable bcryptHash = new RainbowTable(BCryptHash.hashWithBcrypt(word), "BCrypt", word);
 
-
-            String sha256Hash = SHA256Hash.hashWithSHA256(word);
-            if (sha256Hash.equals(targetHash)) {
-                foundWord = word;
-                break;
-            }
-
-            String sha256SaltedHash = SHA256SaltHash.hashWithSHA256AndSalt(word);
-            if (sha256SaltedHash.equals(targetHash)) {
-                foundWord = word;
-                break;
-            }
-
-            String bcryptHash = BCryptHash.hashWithBcrypt(word);
-            if (bcryptHash.equals(targetHash)) {
-                foundWord = word;
-                break;
-            }
+            // Fügen Sie die Zuordnungen zwischen Hash und Passwort in die Rainbow Table ein
+            rainbowTableHash.put(md5Hash.getHash(), md5Hash);
+            rainbowTableHash.put(sha256Hash.getHash(), sha256Hash);
+            rainbowTableHash.put(sha256SaltedHash.getHash(), sha256SaltedHash);
+            rainbowTableHash.put(bcryptHash.getHash(), bcryptHash);
         }
 
-        if (foundWord != null) {
-            System.out.println("Gefundenes Wort für den Hash: " + foundWord);
-        } else {
-            System.out.println("Hash nicht gefunden.");
-        }
-
-
-        // Jetzt enthält "hashedWords" alle gehashten Werte für die Wörter aus der Datei.
-
+        return rainbowTableHash;
     }
-        private static List<String> readWordsFromFile (String filePath) throws IOException {
-            List<String> words = Files.readAllLines(Paths.get(filePath));
-            return words;
-        }
+
+    private static List<String> readWordsFromFile(String filePath) throws IOException {
+        List<String> words = Files.readAllLines(Paths.get(filePath));
+        return words;
     }
+}
+    //In dieser überarbeiteten Version wird die Rainbow Table in der Map<String, String> rainbowTable gespeichert, wobei der Hash-Wert als Schlüssel und das ursprüngliche Passwort als Wert dienen. Beachten Sie, dass dies immer noch ein einfaches Beispiel ist, das nicht alle Aspekte einer echten Rainbow-Table-Implementierung berücksichtigt. In der Praxis ist die Erstellung einer Rainbow Table ein sehr ressourcenintensiver und komplexer Prozess.
+
+
+
+
+
 
