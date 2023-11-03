@@ -15,13 +15,11 @@ public class PasswordHasher {
 
         List<String> words = readWordsFromFile(filePath);
 
-        //Map<String, String> rainbowTable = generateRainbowTable(words);
-
-        //String foundWord = rainbowTable.get(targetHash);
-
         Map<String, RainbowTable> rainbowTable = generateRainbowTable(words);
+        //zur Vereinfachung wird die Rainbow Table in eine Map gespeichert
 
         RainbowTable foundHash = rainbowTable.get(targetHash);
+        //target Hash wird in der Rainbow Table gesucht
 
         if (foundHash != null) {
             System.out.println("Gefundenes Wort für den Hash: " + foundHash.getWord());
@@ -30,33 +28,37 @@ public class PasswordHasher {
             System.out.println("Hash wurde nicht gefunden.");
 
         }
+        //wird Hash-Wert gefunden, wird das ursprüngliche Passwort und die verwendete Hash Methode ausgegeben
     }
 
     private static Map<String, RainbowTable> generateRainbowTable(List<String> words) throws NoSuchAlgorithmException {
         Map<String, RainbowTable> rainbowTableHash = new HashMap<>();
+        //Für jedes Passwort in der Liste wird der Hash-Wert für die veschiedenen Hash-Methoden berechnet
+        // Erzeugt die Rainbow Table
 
         for (String word : words) {
             RainbowTable md5Hash = new RainbowTable(MD5Hash.hashWithMD5(word), "MD5", word);
             RainbowTable sha256Hash = new RainbowTable(SHA256Hash.hashWithSHA256(word), "SHA256", word);
             RainbowTable sha256SaltedHash = new RainbowTable(SHA256SaltHash.hashWithSHA256AndSalt(word), "HA256 with Salt", word);
             RainbowTable bcryptHash = new RainbowTable(BCryptHash.hashWithBcrypt(word), "BCrypt", word);
+            //der Hash-Wert des Passworts wird mit dem jeweiligem Algorithmus berechnet und ein neues RainbowTable-Objekt wird erstellt
 
-            // Fügen Sie die Zuordnungen zwischen Hash und Passwort in die Rainbow Table ein
             rainbowTableHash.put(md5Hash.getHash(), md5Hash);
             rainbowTableHash.put(sha256Hash.getHash(), sha256Hash);
             rainbowTableHash.put(sha256SaltedHash.getHash(), sha256SaltedHash);
             rainbowTableHash.put(bcryptHash.getHash(), bcryptHash);
+            //Objekt wird mit dem berechneten Hash-Wert als Schlüssel in die in Map eingefügt
         }
 
         return rainbowTableHash;
+
     }
 
     private static List<String> readWordsFromFile(String filePath) throws IOException {
-        List<String> words = Files.readAllLines(Paths.get(filePath));
-        return words;
+        List<String> wordList = Files.readAllLines(Paths.get(filePath));
+        return wordList;
     }
 }
-    //In dieser überarbeiteten Version wird die Rainbow Table in der Map<String, String> rainbowTable gespeichert, wobei der Hash-Wert als Schlüssel und das ursprüngliche Passwort als Wert dienen. Beachten Sie, dass dies immer noch ein einfaches Beispiel ist, das nicht alle Aspekte einer echten Rainbow-Table-Implementierung berücksichtigt. In der Praxis ist die Erstellung einer Rainbow Table ein sehr ressourcenintensiver und komplexer Prozess.
 
 
 

@@ -10,6 +10,7 @@ public class SHA256SaltHash {
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         String password = input + bytesToHex(salt);
+        //Ursprüngliches Passwort wird mit Salt kombiniert
         String hashedPassword = null;
 
         try {
@@ -30,4 +31,5 @@ public class SHA256SaltHash {
         }
         return result.toString();
     }
+//Diese Methode verwendet den SHA-256-Hash-Algorithmus
 }

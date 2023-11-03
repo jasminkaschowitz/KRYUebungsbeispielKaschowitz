@@ -6,4 +6,5 @@ public class BCryptHash {
             String salt = BCrypt.gensalt();
             return BCrypt.hashpw(password, salt);
         }
+        //In dieser Klasse wird der BCRYPT-Hash-Algorithmus verwendet --> zufälliger Salt wird automatisch generiert
 }

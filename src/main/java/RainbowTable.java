@@ -4,6 +4,8 @@ public class RainbowTable {
     private String hashMethod;
     private String word;
 
+    //eigene Klasse, um sowohl den Hash-Wert, die verwendete Hash-Methode als auch das ursprüngliche Passwort zu speichern
+
     public RainbowTable(String hash, String hashMethod, String word) {
         this.hash = hash;
         this.hashMethod = hashMethod;

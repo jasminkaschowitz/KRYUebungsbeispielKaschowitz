@@ -19,4 +19,5 @@ public class SHA256Hash {
         }
         return result.toString();
     }
+    //Der SHA-256-Hash-Algorithmus wird verwendet, um das eingegebene Passwort zu hashen
 }
