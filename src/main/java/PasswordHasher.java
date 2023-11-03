@@ -22,8 +22,10 @@ public class PasswordHasher {
         //target Hash wird in der Rainbow Table gesucht
 
         if (foundHash != null) {
+            System.out.println("Gesuchter Hash-Wert lautet: " + foundHash.getHash());
             System.out.println("Gefundenes Wort für den Hash: " + foundHash.getWord());
             System.out.println("Verwendete Hash-Methode: " + foundHash.getHashMethod());
+
         } else {
             System.out.println("Hash wurde nicht gefunden.");
 
